@@ -1,0 +1,807 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shell运算符 - DevOps</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Linux</li><li class="chapter-item expanded affix "><li class="part-title">Docker</li><li class="chapter-item expanded affix "><li class="part-title">K8s</li><li class="chapter-item expanded affix "><li class="part-title">Shell</li><li class="chapter-item expanded "><a href="../Shell/Shell.html"><strong aria-hidden="true">2.</strong> Shell简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Shell/Shell变量.html"><strong aria-hidden="true">2.1.</strong> Shell变量</a></li><li class="chapter-item expanded "><a href="../Shell/Shell传递参数.html"><strong aria-hidden="true">2.2.</strong> Shell传递参数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell数组.html"><strong aria-hidden="true">2.3.</strong> Shell数组</a></li><li class="chapter-item expanded "><a href="../Shell/Shell运算符.html" class="active"><strong aria-hidden="true">2.4.</strong> Shell运算符</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出.html"><strong aria-hidden="true">2.5.</strong> Shell输入输出</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出重定向.html"><strong aria-hidden="true">2.6.</strong> Shell输入输出重定向</a></li><li class="chapter-item expanded "><a href="../Shell/Shell流程控制.html"><strong aria-hidden="true">2.7.</strong> Shell流程控制</a></li><li class="chapter-item expanded "><a href="../Shell/Shell函数.html"><strong aria-hidden="true">2.8.</strong> Shell函数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell文件包含.html"><strong aria-hidden="true">2.9.</strong> Shell文件包含</a></li><li class="chapter-item expanded "><a href="../Shell/Shell编程综合案例.html"><strong aria-hidden="true">2.10.</strong> Shell编程综合案例</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DevOps</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="shell-运算符"><a class="header" href="#shell-运算符">Shell 运算符</a></h1>
+<ul>
+<li><a href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E7%AE%80%E4%BB%8B">运算符简介</a></li>
+<li><a href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6">算术运算符</a></li>
+<li><a href="#%E4%B8%89%E7%A7%8D%E6%B1%82%E5%80%BC%E6%96%B9%E5%BC%8F">三种求值方式</a>
+<ul>
+<li><a href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F">$((表达式))</a></li>
+<li><a href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F-1"><code>$[表达式]</code></a></li>
+<li><a href="#expr-%E7%AE%80%E5%8D%95%E5%8A%A0%E6%B3%95%E5%AE%9E%E4%BE%8B">expr 简单加法实例</a></li>
+</ul>
+</li>
+<li><a href="#%E8%87%AA%E5%A2%9E%E5%92%8C%E8%87%AA%E5%87%8F%E6%93%8D%E4%BD%9C%E7%AC%A6">自增和自减操作符</a>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8-let-%E5%91%BD%E4%BB%A4">使用 let 命令</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8---%E8%BF%9B%E8%A1%8C%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97">使用 $(( )) 进行算术运算</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-expr-%E5%91%BD%E4%BB%A4">使用 expr 命令</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8---%E8%BF%9B%E8%A1%8C%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97-1">使用 (( )) 进行算术运算</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B3%E7%B3%BB%E8%BF%90%E7%AE%97%E7%AC%A6">关系运算符</a></li>
+<li><a href="#%E5%B8%83%E5%B0%94%E8%BF%90%E7%AE%97%E7%AC%A6">布尔运算符</a></li>
+<li><a href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6">逻辑运算符</a></li>
+<li><a href="#%E9%99%84%E5%BD%95%E5%B8%83%E5%B0%94%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9A%84%E5%85%B3%E7%B3%BB">附录布尔运算符和逻辑运算符的关系</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BF%90%E7%AE%97%E7%AC%A6">字符串运算符</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95%E8%BF%90%E7%AE%97%E7%AC%A6">文件测试运算符</a>
+<ul>
+<li><a href="#%E6%96%87%E4%BB%B6%E6%A3%80%E6%B5%8B%E5%AE%9E%E4%BE%8B">文件检测实例</a></li>
+</ul>
+</li>
+<li><a href="#shell-test-%E5%91%BD%E4%BB%A4">Shell test 命令</a>
+<ul>
+<li><a href="#%E6%95%B0%E5%80%BC%E6%B5%8B%E8%AF%95">数值测试</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B5%8B%E8%AF%95">字符串测试</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95">文件测试</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="运算符简介"><a class="header" href="#运算符简介">运算符简介</a></h2>
+<p>Shell 和其他编程语言一样，支持多种运算符，包括：</p>
+<ul>
+<li>算术运算符</li>
+<li>关系运算符</li>
+<li>布尔运算符</li>
+<li>字符串运算符</li>
+<li>文件测试运算符</li>
+</ul>
+<p>原生 bash 不支持简单的数学运算，但是可以通过其他命令来实现，例如 awk 和 expr，expr 最常用。</p>
+<p>expr 是一款表达式计算工具，使用它能完成表达式的求值操作。</p>
+<p>例如，两个数相加 (<strong>注意使用的是反引号 ` 而不是单引号 '</strong>)：</p>
+<h2 id="算术运算符"><a class="header" href="#算术运算符">算术运算符</a></h2>
+<p>下表列出了常用的算术运算符，假定变量 a 为 10，变量 b 为 20：</p>
+<div class="table-wrapper"><table><thead><tr><th>运算符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>+</td><td>加法</td><td><code>expr $a + $b</code> 结果为 30。</td></tr>
+<tr><td>-</td><td>减法</td><td><code>expr $a - $b</code> 结果为 -10。</td></tr>
+<tr><td>*</td><td>乘法</td><td><code>expr $a \* $b</code> 结果为  200。</td></tr>
+<tr><td>/</td><td>除法</td><td><code>expr $b / $a</code> 结果为 2。</td></tr>
+<tr><td>%</td><td>取余</td><td><code>expr $b % $a</code> 结果为 0。</td></tr>
+<tr><td>=</td><td>赋值</td><td>a=<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">b</span><span class="mord cjk_fallback">把变量</span><span class="mord mathnormal">b</span><span class="mord cjk_fallback">的值赋给</span><span class="mord mathnormal">a</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">==</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord cjk_fallback">相等。用于比较两个数字，相同则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span></span></span></span>a == <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">b</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">se</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord cjk_fallback">不相等。用于比较两个数字，不相同则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span></span></span></span>a != <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">b</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">∗</span><span class="mord cjk_fallback">注意：</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">∗</span><span class="mord cjk_fallback">条件表达式要放在方括号之间，并且要有空格，例如</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4653em;"></span><span class="mord"> </span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∗</span><span class="mord">‘</span><span class="mopen">[</span></span></span></span>a==<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">b</span><span class="mclose">]</span><span class="mord">‘</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">∗</span><span class="mord"> </span><span class="mord cjk_fallback">是错误的，必须写成</span><span class="mord"> </span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∗</span><span class="mord">‘</span><span class="mopen">[</span></span></span></span>a == $b ]`**。</td></tr>
+</tbody></table>
+</div>
+<p>算术运算符实例如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+a=10
+b=20
+
+val=`expr $a + &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;b&lt;/span&gt;&lt;span class="mord"&gt;‘&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;+&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;b&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;:&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;val"
+
+val=`expr $a - $b`
+echo "a - b : &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;v&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;v&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord"&gt;‘&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal"&gt;x&lt;/span&gt;&lt;span class="mord mathnormal"&gt;p&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.02778em;"&gt;r&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a \* &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;b&lt;/span&gt;&lt;span class="mord"&gt;‘&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;∗&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;b&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;:&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;val"
+
+val=`expr $b / $a`
+echo "b /a : &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;v&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;v&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord"&gt;‘&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal"&gt;x&lt;/span&gt;&lt;span class="mord mathnormal"&gt;p&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.02778em;"&gt;r&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b % &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord"&gt;‘&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;b&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;val"
+
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;==&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "a 等于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "a 不等于 b"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>a + b : 30
+a - b : -10
+a * b : 200
+b /a : 2
+b % a : 0
+a 不等于 b
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong></p>
+<ul>
+<li>乘号 (*) 前边必须加反斜杠 () 才能实现乘法运算；</li>
+<li>if...then...fi 是条件语句，后续将会讲解。</li>
+<li>在 MAC 中 shell 的 expr 语法是：<strong>$((表达式))</strong>，此处表达式中的 "*" 不需要转义符号 "\" 。</li>
+</ul>
+</blockquote>
+<h2 id="三种求值方式"><a class="header" href="#三种求值方式">三种求值方式</a></h2>
+<h3 id="表达式"><a class="header" href="#表达式"><strong>$((表达式))</strong></a></h3>
+<p>在 MAC 中 shell 的 expr 语法是：<strong>$((表达式))</strong>，此处表达式中的 "*" 不需要转义符号 "\" 。</p>
+<p>例如计算（2+3）x 4 的值：</p>
+<p><code>$(((2+3)*4))</code></p>
+<h3 id="表达式-1"><a class="header" href="#表达式-1"><strong><code>$[表达式]</code></strong></a></h3>
+<p>例 1：计算（2+3）x 4 的值：</p>
+<p>推荐使用 <code>$[(2+3)*4]</code></p>
+<p>例 2：求出命令行的两个参数【整数】的和</p>
+<p><code>$[$1 + $2]</code></p>
+<h3 id="expr-简单加法实例"><a class="header" href="#expr-简单加法实例">expr 简单加法实例</a></h3>
+<pre><code class="language-shell">#!/bin/bash  
+  
+val=`expr 2 + 2`  
+echo "两数之和为 : $val"  
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>两数之和为 : 4
+</code></pre>
+<p>注意：</p>
+<ul>
+<li>表达式和运算符之间要有空格，例如 2+2 是不对的，必须写成 2 + 2，这与我们熟悉的大多数编程语言不一样。</li>
+<li>完整的表达式要被 `` 包含，注意这个字符不是常用的单引号，在 Esc 键下边。</li>
+</ul>
+<hr />
+<h2 id="自增和自减操作符"><a class="header" href="#自增和自减操作符">自增和自减操作符</a></h2>
+<p>尽管 Shell 本身没有像 C、C++ 或 Java 那样的 ++ 和 -- 操作符，但可以通过其他方式实现相同的功能。以下是一些常见的方法：</p>
+<h3 id="使用-let-命令"><a class="header" href="#使用-let-命令">使用 let 命令</a></h3>
+<p>let 命令允许对整数进行算术运算。</p>
+<pre><code class="language-shell">#!/bin/bash
+
+# 初始化变量
+num=5
+
+# 自增
+let num++
+
+# 自减
+let num--
+
+echo $num
+</code></pre>
+<h3 id="使用---进行算术运算"><a class="header" href="#使用---进行算术运算">使用 $(( )) 进行算术运算</a></h3>
+<p>$(( )) 语法也是进行算术运算的一种方式。</p>
+<pre><code class="language-shell">#!/bin/bash
+
+# 初始化变量
+num=5
+
+# 自增
+num=$((num + 1))
+
+# 自减
+num=$((num - 1))
+
+echo $num
+</code></pre>
+<h3 id="使用-expr-命令"><a class="header" href="#使用-expr-命令">使用 expr 命令</a></h3>
+<p>expr 命令可以用于算术运算，但不如 <strong>let</strong> 和 <strong>$(( ))</strong> 常用。</p>
+<pre><code class="language-shell">#!/bin/bash
+
+# 初始化变量
+num=5
+
+# 自增
+num=$(expr $num + 1)
+
+# 自减
+num=$(expr $num - 1)
+
+echo $num
+</code></pre>
+<h3 id="使用---进行算术运算-1"><a class="header" href="#使用---进行算术运算-1">使用 (( )) 进行算术运算</a></h3>
+<p>与 $(( )) 类似，(( )) 语法也可以用于算术运算。</p>
+<pre><code class="language-shell">#!/bin/bash
+
+# 初始化变量
+num=5
+
+# 自增
+((num++))
+
+# 自减
+((num--))
+
+echo $num
+</code></pre>
+<hr />
+<h2 id="关系运算符"><a class="header" href="#关系运算符">关系运算符</a></h2>
+<p>关系运算符只支持数字，不支持字符串，除非字符串的值是数字。</p>
+<p>下表列出了常用的关系运算符，假定变量 a 为 10，变量 b 为 20：</p>
+<div class="table-wrapper"><table><thead><tr><th>运算符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>-eq</td><td>检测两个数是否相等，相等返回 true。</td><td>[ $a -eq $b ] 返回 false。</td></tr>
+<tr><td>-ne</td><td>检测两个数是否不相等，不相等返回 true。</td><td>[ $a -ne $b ] 返回 true。</td></tr>
+<tr><td>-gt</td><td>检测左边的数是否大于右边的，如果是，则返回 true。</td><td>[ $a -gt $b ] 返回 false。</td></tr>
+<tr><td>-lt</td><td>检测左边的数是否小于右边的，如果是，则返回 true。</td><td>[ $a -lt $b ] 返回 true。</td></tr>
+<tr><td>-ge</td><td>检测左边的数是否大于等于右边的，如果是，则返回 true。</td><td>[ $a -ge $b ] 返回 false。</td></tr>
+<tr><td>-le</td><td>检测左边的数是否小于等于右边的，如果是，则返回 true。</td><td>[ $a -le $b ] 返回 true。</td></tr>
+</tbody></table>
+</div>
+<p>关系运算符实例如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+a=10
+b=20
+
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;q&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;q&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b : a 等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;q&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 不等于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 不等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b : a 等于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 大于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 不大于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 小于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 不小于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 大于或等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.625em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 小于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 小于或等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 大于 b"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>10 -eq 20: a 不等于 b
+10 -ne 20: a 不等于 b
+10 -gt 20: a 不大于 b
+10 -lt 20: a 小于 b
+10 -ge 20: a 小于 b
+10 -le 20: a 小于或等于 b
+</code></pre>
+<hr />
+<h2 id="布尔运算符"><a class="header" href="#布尔运算符">布尔运算符</a></h2>
+<p>下表列出了常用的布尔运算符，假定变量 a 为 10，变量 b 为 20：</p>
+<div class="table-wrapper"><table><thead><tr><th>运算符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>!</td><td>非运算，表达式为 true 则返回 false，否则返回 true。</td><td>[ ! false ] 返回 true。</td></tr>
+<tr><td>-o</td><td>或运算，有一个表达式为 true 则返回 true。</td><td>[ $a -lt 20 -o $b -gt 100 ] 返回 true。</td></tr>
+<tr><td>-a</td><td>与运算，两个表达式都为 true 才返回 true。</td><td>[ $a -lt 20 -a $b -gt 100 ] 返回 false。</td></tr>
+</tbody></table>
+</div>
+<p>布尔运算符实例如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+a=10
+b=20
+
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b : a 不等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;==&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 等于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b -gt 15 ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;且&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 15 : 返回 true"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;且&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 15 : 返回 false"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b -gt 100 ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;或&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 100 : 返回 true"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;100&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;或&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 100 : 返回 false"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;span class="mord"&gt;5&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b -gt 100 ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;5&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;或&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 100 : 返回 true"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;小于&lt;/span&gt;&lt;span class="mord"&gt;5&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;或&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b 大于 100 : 返回 false"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>10 != 20 : a 不等于 b
+10 小于 100 且 20 大于 15 : 返回 true
+10 小于 100 或 20 大于 100 : 返回 true
+10 小于 5 或 20 大于 100 : 返回 false
+</code></pre>
+<hr />
+<h2 id="逻辑运算符"><a class="header" href="#逻辑运算符">逻辑运算符</a></h2>
+<p>以下介绍 Shell 的逻辑运算符，假定变量 a 为 10，变量 b 为 20:</p>
+<div class="table-wrapper"><table><thead><tr><th>运算符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>&amp;&amp;</td><td>逻辑的 AND</td><td><code>[[ $a -lt 100 &amp;&amp; $b -gt 100 ]]</code> 返回 false</td></tr>
+<tr><td>||</td><td>逻辑的 OR</td><td><code>[[ $a -lt 100</code> || <code>$b -gt 100 ]]</code> 返回 true</td></tr>
+</tbody></table>
+</div>
+<p>逻辑运算符实例如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+a=10
+b=20
+
+if [[ $a -lt 100 &amp;&amp; $b -gt 100 ]]
+then
+   echo "返回 true"
+else
+   echo "返回 false"
+fi
+
+if [[ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;span class="mord"&gt;100∣∣&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b -gt 100 ]]
+then
+   echo "返回 true"
+else
+   echo "返回 false"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>返回 false
+返回 true
+</code></pre>
+<h2 id="附录布尔运算符和逻辑运算符的关系"><a class="header" href="#附录布尔运算符和逻辑运算符的关系">附录布尔运算符和逻辑运算符的关系</a></h2>
+<p>在 <code>bash shell</code> 中，逻辑运算符和布尔运算符其实是同一个概念，主要用来连接两个条件表达式或命令。通常逻辑运算符包括 <code>-o</code>(OR)、<code>-a</code>(AND) 和 <code>!</code>(NOT)，而布尔运算符包括 <code>||</code>（逻辑或）和 <code>&amp;&amp;</code>（逻辑与）。</p>
+<p>逻辑运算符和布尔运算符的主要区别在于语法形式和用法上。在 <code>bash shell</code> 中，我们可以使用逻辑运算符和布尔运算符来连接条件表达式或命令，例如：</p>
+<ul>
+<li>使用逻辑运算符 <code>-o</code> 和 <code>-a</code>，示例如下：</li>
+</ul>
+<pre><code class="language-bash">if [ "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.03588em;"&gt;g&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;span class="mord"&gt;10&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b" -lt 20 ]; then
+    echo "条件成立"
+fi
+</code></pre>
+<ul>
+<li>使用布尔运算符 <code>||</code> 和 <code>&amp;&amp;</code>，示例如下：</li>
+</ul>
+<pre><code class="language-bash">if [ "$a" -gt 10 ] &amp;&amp; [ "$b" -lt 20 ]; then
+    echo "条件成立"
+fi
+</code></pre>
+<p>综上所述，逻辑运算符和布尔运算符在 <code>bash shell</code> 中都可以用来连接条件表达式或命令，只是语法形式和用法略有不同。逻辑运算符更常用于 <code>test</code> 表达式中，而布尔运算符更常用于逻辑判断语句中。</p>
+<hr />
+<h2 id="字符串运算符"><a class="header" href="#字符串运算符">字符串运算符</a></h2>
+<p>下表列出了常用的字符串运算符，假定变量 a 为 "abc"，变量 b 为 "efg"：</p>
+<div class="table-wrapper"><table><thead><tr><th>运算符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>=</td><td>检测两个字符串是否相等，相等返回 true。</td><td>[ $a = $b ] 返回 false。</td></tr>
+<tr><td>!=</td><td>检测两个字符串是否不相等，不相等返回 true。</td><td>[ $a != $b ] 返回 true。</td></tr>
+<tr><td>-z</td><td>检测字符串长度是否为 0，为 0 返回 true。</td><td>[ -z $a ] 返回 false。</td></tr>
+<tr><td>-n</td><td>检测字符串长度是否不为 0，不为 0 返回 true。</td><td>[ -n "$a" ] 返回 true。</td></tr>
+<tr><td>$</td><td>检测字符串是否不为空，不为空返回 true。</td><td>[ $a ] 返回 true。</td></tr>
+</tbody></table>
+</div>
+<p>字符串运算符实例如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+a="abc"
+b="efg"
+
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b : a 等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 不等于 b"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b ]
+then
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b : a 不等于 b"
+else
+   echo "&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6944em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;!&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;b: a 等于 b"
+fi
+if [ -z &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;]&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.04398em;"&gt;z&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a : 字符串长度为 0"
+else
+   echo "-z &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;:&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;字符串长度不为&lt;/span&gt;&lt;span class="mord"&gt;0&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10764em;"&gt;f&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ii&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10764em;"&gt;f&lt;/span&gt;&lt;span class="mopen"&gt;[&lt;/span&gt;&lt;span class="mord"&gt;−&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a" ]
+then
+   echo "-n &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;span class="mrel"&gt;:&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2778em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;字符串长度不为&lt;/span&gt;&lt;span class="mord"&gt;0&amp;quot;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.01968em;"&gt;l&lt;/span&gt;&lt;span class="mord mathnormal"&gt;seec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.4306em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a : 字符串长度为 0"
+fi
+if [ &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mclose"&gt;]&lt;/span&gt;&lt;span class="mord mathnormal"&gt;t&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;e&lt;/span&gt;&lt;span class="mord mathnormal"&gt;n&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a : 字符串不为空"
+else
+   echo "$a : 字符串为空"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>abc = efg: a 不等于 b
+abc != efg : a 不等于 b
+-z abc : 字符串长度不为 0
+-n abc : 字符串长度不为 0
+abc : 字符串不为空
+</code></pre>
+<hr />
+<h2 id="文件测试运算符"><a class="header" href="#文件测试运算符">文件测试运算符</a></h2>
+<p>文件测试运算符用于检测 Unix 文件的各种属性。</p>
+<p>属性检测描述如下：</p>
+<div class="table-wrapper"><table><thead><tr><th>操作符</th><th>说明</th><th>举例</th></tr></thead><tbody>
+<tr><td>-b file</td><td>检测文件是否是块设备文件，如果是，则返回 true。</td><td>[ -b $file ] 返回 false。</td></tr>
+<tr><td>-c file</td><td>检测文件是否是字符设备文件，如果是，则返回 true。</td><td>[ -c <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">se</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">df</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件是否是目录，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal">d</span></span></span></span>file ] 返回 false。</td></tr>
+<tr><td>-f file</td><td>检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true。</td><td>[ -f <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件是否设置了</span><span class="mord mathnormal">SG</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord cjk_fallback">位，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span>file ] 返回 false。</td></tr>
+<tr><td>-k file</td><td>检测文件是否设置了粘着位 (Sticky Bit)，如果是，则返回 true。</td><td>[ -k <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">se</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件是否是有名管道，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal">p</span></span></span></span>file ] 返回 false。</td></tr>
+<tr><td>-u file</td><td>检测文件是否设置了 SUID 位，如果是，则返回 true。</td><td>[ -u <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">se</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件是否可读，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>file ] 返回 true。</td></tr>
+<tr><td>-w file</td><td>检测文件是否可写，如果是，则返回 true。</td><td>[ -w <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件是否可执行，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal">x</span></span></span></span>file ] 返回 true。</td></tr>
+<tr><td>-s file</td><td>检测文件是否为空（文件大小是否大于 0），不为空返回 true。</td><td>[ -s <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mclose">]</span><span class="mord cjk_fallback">返回</span><span class="mord"> </span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">∣</span><span class="mord cjk_fallback">检测文件（包括目录）是否存在，如果是，则返回</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mord cjk_fallback">。</span><span class="mord">∣</span><span class="mopen">[</span><span class="mord">−</span><span class="mord mathnormal">e</span></span></span></span>file ] 返回 true。</td></tr>
+</tbody></table>
+</div>
+<p>其他检查符：</p>
+<ul>
+<li><strong>-S</strong>: 判断某文件是否 socket。</li>
+<li><strong>-L</strong>: 检测文件是否存在并且是一个符号链接。</li>
+</ul>
+<h3 id="文件检测实例"><a class="header" href="#文件检测实例">文件检测实例</a></h3>
+<p>变量 file 表示文件 <strong>/var/www/runoob/test.sh</strong>，它的大小为 100 字节，具有 <strong>rwx</strong> 权限。下面的代码，将检测该文件的各种属性：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+file="/var/www/runoob/test.sh"
+if [ -r $file ]
+then
+   echo "文件可读"
+else
+   echo "文件不可读"
+fi
+if [ -w $file ]
+then
+   echo "文件可写"
+else
+   echo "文件不可写"
+fi
+if [ -x $file ]
+then
+   echo "文件可执行"
+else
+   echo "文件不可执行"
+fi
+if [ -f $file ]
+then
+   echo "文件为普通文件"
+else
+   echo "文件为特殊文件"
+fi
+if [ -d $file ]
+then
+   echo "文件是个目录"
+else
+   echo "文件不是个目录"
+fi
+if [ -s $file ]
+then
+   echo "文件不为空"
+else
+   echo "文件为空"
+fi
+if [ -e $file ]
+then
+   echo "文件存在"
+else
+   echo "文件不存在"
+fi
+</code></pre>
+<p>执行脚本，输出结果如下所示：</p>
+<pre><code>文件可读
+文件可写
+文件可执行
+文件为普通文件
+文件不是个目录
+文件不为空
+文件存在
+</code></pre>
+<h2 id="shell-test-命令"><a class="header" href="#shell-test-命令">Shell test 命令</a></h2>
+<p>Shell 中的 test 命令用于检查某个条件是否成立，它可以进行数值、字符和文件三个方面的测试。</p>
+<hr />
+<h3 id="数值测试"><a class="header" href="#数值测试">数值测试</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody>
+<tr><td>-eq</td><td>等于则为真</td></tr>
+<tr><td>-ne</td><td>不等于则为真</td></tr>
+<tr><td>-gt</td><td>大于则为真</td></tr>
+<tr><td>-ge</td><td>大于等于则为真</td></tr>
+<tr><td>-lt</td><td>小于则为真</td></tr>
+<tr><td>-le</td><td>小于等于则为真</td></tr>
+</tbody></table>
+</div>
+<p>相等判断实例</p>
+<pre><code class="language-shell">num1=100
+num2=100
+if test $[num1] -eq $[num2]
+then
+    echo ' 两个数相等！'
+else
+    echo ' 两个数不相等！'
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>两个数相等！
+</code></pre>
+<p>代码中的 <code>[]</code> 执行基本的算数运算，如：</p>
+<pre><code class="language-shell">#!/bin/bash
+
+a=5
+b=6
+
+result=$[a+b] # 注意等号两边不能有空格
+echo "result 为： $result"
+</code></pre>
+<p>结果为:</p>
+<pre><code>result 为： 11
+</code></pre>
+<hr />
+<h3 id="字符串测试"><a class="header" href="#字符串测试">字符串测试</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody>
+<tr><td>=</td><td>等于则为真</td></tr>
+<tr><td>!=</td><td>不相等则为真</td></tr>
+<tr><td>-z 字符串</td><td>字符串的长度为零则为真</td></tr>
+<tr><td>-n 字符串</td><td>字符串的长度不为零则为真</td></tr>
+</tbody></table>
+</div>
+<p>字符串相等判断实例</p>
+<pre><code class="language-shell">num1="ru1noob"
+num2="runoob"
+if test $num1 = $num2
+then
+    echo ' 两个字符串相等！'
+else
+    echo ' 两个字符串不相等！'
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>两个字符串不相等！
+</code></pre>
+<hr />
+<h3 id="文件测试"><a class="header" href="#文件测试">文件测试</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody>
+<tr><td>-e 文件名</td><td>如果文件存在则为真</td></tr>
+<tr><td>-r 文件名</td><td>如果文件存在且可读则为真</td></tr>
+<tr><td>-w 文件名</td><td>如果文件存在且可写则为真</td></tr>
+<tr><td>-x 文件名</td><td>如果文件存在且可执行则为真</td></tr>
+<tr><td>-s 文件名</td><td>如果文件存在且至少有一个字符则为真</td></tr>
+<tr><td>-d 文件名</td><td>如果文件存在且为目录则为真</td></tr>
+<tr><td>-f 文件名</td><td>如果文件存在且为普通文件则为真</td></tr>
+<tr><td>-c 文件名</td><td>如果文件存在且为字符型特殊文件则为真</td></tr>
+<tr><td>-b 文件名</td><td>如果文件存在且为块特殊文件则为真</td></tr>
+</tbody></table>
+</div>
+<p>判断文件存在实例</p>
+<pre><code class="language-shell">cd /bin
+if test -e ./bash
+then
+    echo ' 文件已存在！'
+else
+    echo ' 文件不存在！'
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>文件已存在！
+</code></pre>
+<p>另外，Shell 还提供了与 ( -a )、或 ( -o )、非 ( ! ) 三个逻辑操作符用于将测试条件连接起来，其优先级为： ! 最高， -a 次之， -o 最低。例如：</p>
+<pre><code class="language-shell">cd /bin
+if test -e ./notFile -o -e ./bash
+then
+    echo ' 至少有一个文件存在！'
+else
+    echo ' 两个文件都不存在 '
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>至少有一个文件存在！
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Shell/Shell数组.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Shell/Shell输入输出.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Shell/Shell数组.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Shell/Shell输入输出.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

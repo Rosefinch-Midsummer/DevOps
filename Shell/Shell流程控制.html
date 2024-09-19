@@ -1,0 +1,563 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shell流程控制 - DevOps</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Linux</li><li class="chapter-item expanded affix "><li class="part-title">Docker</li><li class="chapter-item expanded affix "><li class="part-title">K8s</li><li class="chapter-item expanded affix "><li class="part-title">Shell</li><li class="chapter-item expanded "><a href="../Shell/Shell.html"><strong aria-hidden="true">2.</strong> Shell简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Shell/Shell变量.html"><strong aria-hidden="true">2.1.</strong> Shell变量</a></li><li class="chapter-item expanded "><a href="../Shell/Shell传递参数.html"><strong aria-hidden="true">2.2.</strong> Shell传递参数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell数组.html"><strong aria-hidden="true">2.3.</strong> Shell数组</a></li><li class="chapter-item expanded "><a href="../Shell/Shell运算符.html"><strong aria-hidden="true">2.4.</strong> Shell运算符</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出.html"><strong aria-hidden="true">2.5.</strong> Shell输入输出</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出重定向.html"><strong aria-hidden="true">2.6.</strong> Shell输入输出重定向</a></li><li class="chapter-item expanded "><a href="../Shell/Shell流程控制.html" class="active"><strong aria-hidden="true">2.7.</strong> Shell流程控制</a></li><li class="chapter-item expanded "><a href="../Shell/Shell函数.html"><strong aria-hidden="true">2.8.</strong> Shell函数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell文件包含.html"><strong aria-hidden="true">2.9.</strong> Shell文件包含</a></li><li class="chapter-item expanded "><a href="../Shell/Shell编程综合案例.html"><strong aria-hidden="true">2.10.</strong> Shell编程综合案例</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DevOps</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="shell-流程控制"><a class="header" href="#shell-流程控制">Shell 流程控制</a></h1>
+<ul>
+<li><a href="#if-else-if-else">if else-if else</a></li>
+<li><a href="#for-%E5%BE%AA%E7%8E%AF">for 循环</a></li>
+<li><a href="#while-%E8%AF%AD%E5%8F%A5">while 语句</a>
+<ul>
+<li><a href="#%E8%AF%BB%E5%8F%96%E9%94%AE%E7%9B%98%E4%BF%A1%E6%81%AF">读取键盘信息</a></li>
+<li><a href="#%E6%97%A0%E9%99%90%E5%BE%AA%E7%8E%AF">无限循环</a></li>
+</ul>
+</li>
+<li><a href="#until-%E5%BE%AA%E7%8E%AF">until 循环</a></li>
+<li><a href="#case--esac-%E5%A4%9A%E9%80%89%E6%8B%A9%E8%AF%AD%E5%8F%A5%E4%B8%8D%E4%BC%9A%E7%A9%BF%E9%80%8F">case ... esac 多选择语句（不会穿透）</a></li>
+<li><a href="#%E8%B7%B3%E5%87%BA%E5%BE%AA%E7%8E%AF">跳出循环</a>
+<ul>
+<li><a href="#break-%E5%91%BD%E4%BB%A4">break 命令</a></li>
+<li><a href="#continue-%E5%91%BD%E4%BB%A4">continue 命令</a></li>
+</ul>
+</li>
+</ul>
+<p>和 Java、PHP 等语言不一样，sh 的流程控制不可为空。</p>
+<p>写成一行（适用于终端命令提示符）：</p>
+<pre><code class="language-shell">if [$(ps -ef | grep -c "ssh") -gt 1 ]; then echo "true"; fi
+</code></pre>
+<h3 id="if-else-if-else"><a class="header" href="#if-else-if-else">if else-if else</a></h3>
+<p>if else-if else 语法格式：</p>
+<pre><code class="language-shell">if condition1
+then
+    command1
+elif condition2 
+then 
+    command2
+else
+    commandN
+fi
+</code></pre>
+<p>if else 的 <code>[...]</code> 判断语句中大于使用 -gt，小于使用 -lt。</p>
+<pre><code class="language-shell">if [ "$a" -gt "$b" ]; then
+    ...
+fi
+</code></pre>
+<p>如果使用 ((...)) 作为判断语句，大于和小于可以直接使用 &gt; 和 &lt;。</p>
+<pre><code class="language-shell">if (( a &gt; b )); then
+    ...
+fi
+</code></pre>
+<p>以下实例判断两个变量是否相等：</p>
+<pre><code class="language-shell">a=10
+b=20
+if [ $a == $b ]
+then
+   echo "a 等于 b"
+elif [ $a -gt $b ]
+then
+   echo "a 大于 b"
+elif [ $a -lt $b ]
+then
+   echo "a 小于 b"
+else
+   echo "没有符合的条件"
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>a 小于 b
+</code></pre>
+<p>使用 ((...)) 作为判断语句:</p>
+<pre><code class="language-shell">a=10
+b=20
+if (( $a == $b ))
+then
+   echo "a 等于 b"
+elif (( $a &gt; $b ))
+then
+   echo "a 大于 b"
+elif (( $a &lt; $b ))
+then
+   echo "a 小于 b"
+else
+   echo "没有符合的条件"
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>a 小于 b
+</code></pre>
+<p>if else 语句经常与 test 命令结合使用，如下所示：</p>
+<pre><code class="language-shell">num1=$[2*3]
+num2=$[1+5]
+if test $[num1] -eq $[num2]
+then
+    echo ' 两个数字相等！'
+else
+    echo ' 两个数字不相等！'
+fi
+</code></pre>
+<p>输出结果：</p>
+<pre><code>两个数字相等！
+</code></pre>
+<hr />
+<h2 id="for-循环"><a class="header" href="#for-循环">for 循环</a></h2>
+<p>与其他编程语言类似，Shell 支持 for 循环。</p>
+<p>for 循环一般格式为：</p>
+<pre><code class="language-shell">for var in item1 item2 ... itemN
+do
+    command1
+    command2
+    ...
+    commandN
+done
+</code></pre>
+<p>写成一行：</p>
+<pre><code class="language-shell">for var in item1 item2 ... itemN; do command1; command2… done;
+</code></pre>
+<p>当变量值在列表里，for 循环即执行一次所有命令，使用变量名获取列表中的当前取值。命令可为任何有效的 shell 命令和语句。in 列表可以包含替换、字符串和文件名。</p>
+<p>in 列表是可选的，如果不用它，for 循环使用命令行的位置参数。</p>
+<p>例如，顺序输出当前列表中的数字：</p>
+<pre><code class="language-shell">for loop in 1 2 3 4 5  
+do  
+    echo "The value is: $loop"  
+done  
+</code></pre>
+<p>输出结果：</p>
+<pre><code>The value is: 1
+The value is: 2
+The value is: 3
+The value is: 4
+The value is: 5
+</code></pre>
+<p>for 循环另一种格式：</p>
+<pre><code class="language-shell">for ((初始值：循环控制条件；变量变化))
+do 
+程序 
+done
+</code></pre>
+<p>从 1 加到 100 的值输出显示实例</p>
+<pre><code class="language-shell">#!/bin/bash
+SUM=0
+for ((i=1; i&lt;=100; i++))
+do
+	SUM=$[$SUM+$i]
+done
+echo "SUM=$SUM"
+</code></pre>
+<hr />
+<h2 id="while-语句"><a class="header" href="#while-语句">while 语句</a></h2>
+<p>while 循环用于不断执行一系列命令，也用于从输入文件中读取数据。其语法格式为：</p>
+<pre><code class="language-shell">while condition
+do
+    command
+done
+</code></pre>
+<p>以下是一个基本的 while 循环，测试条件是：如果 int 小于等于 5，那么条件返回真。int 从 1 开始，每次循环处理时，int 加 1。运行上述脚本，返回数字 1 到 5，然后终止。</p>
+<pre><code class="language-shell">#!/bin/bash
+int=1
+while (( $int&lt;=5 ))
+do
+    echo $int
+    let "int++"
+done
+</code></pre>
+<p>运行脚本，输出：</p>
+<pre><code>1
+2
+3
+4
+5
+</code></pre>
+<p>注意：这里 <code>echo</code> 默认换行</p>
+<p>以上实例使用了 Bash let 命令，它用于执行一个或多个表达式，变量计算中不需要加上 $ 来表示变量，具体可查阅：<a href="https://www.runoob.com/linux/linux-comm-let.html">Bash let 命令</a>。</p>
+<h3 id="读取键盘信息"><a class="header" href="#读取键盘信息">读取键盘信息</a></h3>
+<p>while 循环可用于读取键盘信息。下面的例子中，输入信息被设置为变量 FILM，按 <code>&lt;Ctrl-D&gt;</code> 结束循环。</p>
+<pre><code class="language-shell">echo ' 按下 &lt;CTRL-D&gt; 退出 '
+echo -n ' 输入你最喜欢的网站名: '
+while read FILM
+do
+    echo "是的！$FILM 是一个好网站"
+done
+</code></pre>
+<p>运行脚本，输出类似下面：</p>
+<pre><code>按下 &lt;CTRL-D&gt; 退出
+输入你最喜欢的网站名：菜鸟教程
+是的！菜鸟教程 是一个好网站
+</code></pre>
+<h3 id="无限循环"><a class="header" href="#无限循环">无限循环</a></h3>
+<p>无限循环语法格式：</p>
+<pre><code class="language-shell">while :
+do
+    command
+done
+</code></pre>
+<p>或者</p>
+<pre><code class="language-shell">while true
+do
+    command
+done
+</code></pre>
+<p>或者</p>
+<pre><code class="language-shell">for (( ; ; ))
+</code></pre>
+<hr />
+<h2 id="until-循环"><a class="header" href="#until-循环">until 循环</a></h2>
+<p>until 循环执行一系列命令直至条件为 true 时停止。</p>
+<p>until 循环与 while 循环在处理方式上刚好相反。</p>
+<p>一般 while 循环优于 until 循环，但在某些时候 — 也只是极少数情况下，until 循环更加有用。</p>
+<p>until 语法格式:</p>
+<pre><code>until condition
+do
+    command
+done
+</code></pre>
+<p>condition 一般为条件表达式，如果返回值为 false，则继续执行循环体内的语句，否则跳出循环。</p>
+<p>以下实例我们使用 until 命令来输出 0 ~ 9 的数字：</p>
+<pre><code class="language-shell">#!/bin/bash
+
+a=0
+
+until [ ! &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;span class="mbin"&gt;−&lt;/span&gt;&lt;span class="mspace" style="margin-right:0.2222em;"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;lt&lt;/span&gt;&lt;span class="mord"&gt;10&lt;/span&gt;&lt;span class="mclose"&gt;]&lt;/span&gt;&lt;span class="mord mathnormal"&gt;d&lt;/span&gt;&lt;span class="mord mathnormal"&gt;oec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;a
+   a=`expr $a + 1`
+done
+</code></pre>
+<p>输出结果为：</p>
+<pre><code>0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+</code></pre>
+<hr />
+<h2 id="case--esac-多选择语句不会穿透"><a class="header" href="#case--esac-多选择语句不会穿透">case ... esac 多选择语句（不会穿透）</a></h2>
+<p><strong>case ... esac</strong> 为多选择语句，与其他语言中的 switch ... case 语句类似，是一种多分支选择结构，每个 case 分支用右圆括号开始，用两个分号 ;; 表示 break，即执行结束，跳出整个 case ... esac 语句，esac（就是 case 反过来）作为结束标记。</p>
+<p>可以用 case 语句匹配一个值与一个模式，如果匹配成功，执行相匹配的命令。</p>
+<p><strong>case ... esac</strong> 语法格式如下：</p>
+<pre><code class="language-shell">case 值 in
+模式 1)
+    command1
+    command2
+    ...
+    commandN
+    ;;
+模式 2)
+    command1
+    command2
+    ...
+    commandN
+    ;;
+esac
+</code></pre>
+<p>case 工作方式如上所示，取值后面必须为单词 <strong>in</strong>，每一模式必须以右括号结束。取值可以为变量或常数，匹配发现取值符合某一模式后，其间所有命令开始执行直至 ;;。</p>
+<p>取值将检测匹配的每一个模式。一旦模式匹配，则执行完匹配模式相应命令后不再继续其他模式。如果无一匹配模式，使用星号 * 捕获该值，再执行后面的命令。</p>
+<p>下面的脚本提示输入 1 到 4，与每一种模式进行匹配：</p>
+<pre><code class="language-shell">echo ' 输入 1 到 4 之间的数字:'
+echo ' 你输入的数字为:'
+read aNum
+case $aNum in
+    1)  echo ' 你选择了 1'
+    ;;
+    2)  echo ' 你选择了 2'
+    ;;
+    3)  echo ' 你选择了 3'
+    ;;
+    4)  echo ' 你选择了 4'
+    ;;
+    *)  echo ' 你没有输入 1 到 4 之间的数字 '
+    ;;
+esac
+</code></pre>
+<p>输入不同的内容，会有不同的结果，例如：</p>
+<pre><code>输入 1 到 4 之间的数字:
+你输入的数字为:
+3
+你选择了 3
+</code></pre>
+<p>下面的脚本匹配字符串：</p>
+<pre><code class="language-shell">#!/bin/sh
+
+site="runoob"
+
+case "$site" in
+   "runoob") echo "菜鸟教程" 
+   ;;
+   "google") echo "Google 搜索" 
+   ;;
+   "taobao") echo "淘宝网" 
+   ;;
+esac
+</code></pre>
+<p>输出结果为：</p>
+<pre><code>菜鸟教程
+</code></pre>
+<hr />
+<h2 id="跳出循环"><a class="header" href="#跳出循环">跳出循环</a></h2>
+<p>在循环过程中，有时候需要在未达到循环结束条件时强制跳出循环，Shell 使用两个命令来实现该功能：<strong>break</strong> 和 <strong>continue</strong>。</p>
+<h3 id="break-命令"><a class="header" href="#break-命令">break 命令</a></h3>
+<p>break 命令允许跳出所有循环（终止执行后面的所有循环）。</p>
+<p>下面的例子中，脚本进入死循环直至用户输入数字大于 5。要跳出这个循环，返回到 shell 提示符下，需要使用 break 命令。</p>
+<pre><code class="language-shell">#!/bin/bash
+while :
+do
+    echo -n "输入 1 到 5 之间的数字:"
+    read aNum
+    case &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10903em;"&gt;N&lt;/span&gt;&lt;span class="mord mathnormal"&gt;u&lt;/span&gt;&lt;span class="mord mathnormal"&gt;min&lt;/span&gt;&lt;span class="mord"&gt;1∣2∣3∣4∣5&lt;/span&gt;&lt;span class="mclose"&gt;)&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;你输入的数字为&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;aNum!"
+        ;;
+        *) echo "你输入的数字不是 1 到 5 之间的！游戏结束"
+            break
+        ;;
+    esac
+done
+</code></pre>
+<p>执行以上代码，输出结果为：</p>
+<pre><code>输入 1 到 5 之间的数字：3
+你输入的数字为 3!
+输入 1 到 5 之间的数字：7
+你输入的数字不是 1 到 5 之间的！游戏结束
+</code></pre>
+<h3 id="continue-命令"><a class="header" href="#continue-命令">continue 命令</a></h3>
+<p>continue 命令与 break 命令类似，只有一点差别，它不会跳出所有循环，仅仅跳出当前循环。</p>
+<p>对上面的例子进行修改：</p>
+<pre><code class="language-shell">#!/bin/bash
+while :
+do
+    echo -n "输入 1 到 5 之间的数字:"
+    read aNum
+    case &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:1em;vertical-align:-0.25em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10903em;"&gt;N&lt;/span&gt;&lt;span class="mord mathnormal"&gt;u&lt;/span&gt;&lt;span class="mord mathnormal"&gt;min&lt;/span&gt;&lt;span class="mord"&gt;1∣2∣3∣4∣5&lt;/span&gt;&lt;span class="mclose"&gt;)&lt;/span&gt;&lt;span class="mord mathnormal"&gt;ec&lt;/span&gt;&lt;span class="mord mathnormal"&gt;h&lt;/span&gt;&lt;span class="mord mathnormal"&gt;o&lt;/span&gt;&lt;span class="mord"&gt;&amp;quot;&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;你输入的数字为&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;aNum!"
+        ;;
+        *) echo "你输入的数字不是 1 到 5 之间的！"
+            continue
+            echo "游戏结束"
+        ;;
+    esac
+done
+</code></pre>
+<p>运行代码发现，当输入大于 5 的数字时，该例中的循环不会结束，语句 <strong>echo "游戏结束"</strong> 永远不会被执行。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Shell/Shell输入输出重定向.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Shell/Shell函数.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Shell/Shell输入输出重定向.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Shell/Shell函数.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

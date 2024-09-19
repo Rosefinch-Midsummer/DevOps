@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shell函数 - DevOps</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Linux</li><li class="chapter-item expanded affix "><li class="part-title">Docker</li><li class="chapter-item expanded affix "><li class="part-title">K8s</li><li class="chapter-item expanded affix "><li class="part-title">Shell</li><li class="chapter-item expanded "><a href="../Shell/Shell.html"><strong aria-hidden="true">2.</strong> Shell简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Shell/Shell变量.html"><strong aria-hidden="true">2.1.</strong> Shell变量</a></li><li class="chapter-item expanded "><a href="../Shell/Shell传递参数.html"><strong aria-hidden="true">2.2.</strong> Shell传递参数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell数组.html"><strong aria-hidden="true">2.3.</strong> Shell数组</a></li><li class="chapter-item expanded "><a href="../Shell/Shell运算符.html"><strong aria-hidden="true">2.4.</strong> Shell运算符</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出.html"><strong aria-hidden="true">2.5.</strong> Shell输入输出</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出重定向.html"><strong aria-hidden="true">2.6.</strong> Shell输入输出重定向</a></li><li class="chapter-item expanded "><a href="../Shell/Shell流程控制.html"><strong aria-hidden="true">2.7.</strong> Shell流程控制</a></li><li class="chapter-item expanded "><a href="../Shell/Shell函数.html" class="active"><strong aria-hidden="true">2.8.</strong> Shell函数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell文件包含.html"><strong aria-hidden="true">2.9.</strong> Shell文件包含</a></li><li class="chapter-item expanded "><a href="../Shell/Shell编程综合案例.html"><strong aria-hidden="true">2.10.</strong> Shell编程综合案例</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DevOps</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="shell-函数"><a class="header" href="#shell-函数">Shell 函数</a></h1>
+<ul>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0">系统函数</a>
+<ul>
+<li><a href="#basename">basename</a></li>
+<li><a href="#dirname">dirname</a></li>
+</ul>
+</li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0">自定义函数</a>
+<ul>
+<li><a href="#%E6%97%A0%E8%BF%94%E5%9B%9E%E5%80%BC">无返回值</a></li>
+<li><a href="#%E6%9C%89%E8%BF%94%E5%9B%9E%E5%80%BC">有返回值</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0">函数参数</a></li>
+<li><a href="#%E7%89%B9%E6%AE%8A%E5%8F%82%E6%95%B0%E5%AD%97%E7%AC%A6">特殊参数字符</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="系统函数"><a class="header" href="#系统函数">系统函数</a></h2>
+<h3 id="basename"><a class="header" href="#basename">basename</a></h3>
+<p>功能：返回完整路径最后 / 的部分，常用于获取文件名</p>
+<pre><code>basename [pathname] [suffix] 
+
+basename [string] [suffix]
+</code></pre>
+<p>选项：suffix 为后缀，如果 suffix 被指定了，basename 会将 pathname 或 string 中的 suffix 去掉。</p>
+<p>案例：输出 /home/aaa/test.txt 的 “test.txt" 部分</p>
+<p><code>basename /home/aaa/test.txt</code> 得到 <code>test.txt</code></p>
+<p><code>basename /home/aaa/test.txt .txt</code> 得到 <code>test</code></p>
+<h3 id="dirname"><a class="header" href="#dirname">dirname</a></h3>
+<p>功能：返回完整路径最后 / 的前面的部分，常用于返回路径部分</p>
+<p>dirname 文件绝对路径（功能描述：从给定的包含绝对路径的文件名中去除文件名（非目录的部分），然后返回剩下的路径（目录的部分））</p>
+<p>案例：输出 /home/aaa/test.txt 的 /home/aaa</p>
+<p><code>dirname /home/aaa/test.txt</code> 得到 <code>/home/aaa</code></p>
+<h2 id="自定义函数"><a class="header" href="#自定义函数">自定义函数</a></h2>
+<p>linux shell 可以用户定义函数，然后在 shell 脚本中可以随便调用。</p>
+<p>shell 中函数的定义格式如下：</p>
+<pre><code class="language-shell">[ function ] funname [()]
+
+{
+
+    action;
+
+    [return int;]
+
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>1、可以带 function fun () 定义，也可以直接 fun () 定义，不带任何参数。</li>
+<li>2、参数返回，可以显示加：<strong>return</strong> 返回，如果不加，将以最后一条命令运行结果，作为返回值。 <strong>return</strong> 后跟数值 n (0-255).</li>
+</ul>
+<p>注意：return 语句只能返回一个介于 0 到 255 之间的整数</p>
+<h3 id="无返回值"><a class="header" href="#无返回值">无返回值</a></h3>
+<p>下面的例子定义了一个函数并进行调用：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+demoFun (){
+    echo "这是我的第一个 shell 函数！"
+}
+echo "----- 函数开始执行 -----"
+demoFun
+echo "----- 函数执行完毕 -----"
+</code></pre>
+<p>输出结果：</p>
+<pre><code>----- 函数开始执行 -----
+这是我的第一个 shell 函数！
+----- 函数执行完毕 -----
+</code></pre>
+<h3 id="有返回值"><a class="header" href="#有返回值">有返回值</a></h3>
+<p>下面定义一个带有 return 语句的函数：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+funWithReturn (){
+    echo "这个函数会对输入的两个数字进行相加运算..."
+    echo "输入第一个数字:"
+    read aNum
+    echo "输入第二个数字:"
+    read anotherNum
+    echo "两个数字分别为 $aNum 和 $anotherNum !"
+    return $(($aNum+$anotherNum))
+}
+funWithReturn
+echo "输入的两个数字之和为 $? !"
+</code></pre>
+<p>输出类似下面：</p>
+<pre><code>这个函数会对输入的两个数字进行相加运算...
+输入第一个数字: 
+1
+输入第二个数字: 
+2
+两个数字分别为 1 和 2 !
+输入的两个数字之和为 3 !
+</code></pre>
+<p>函数返回值在调用该函数后通过 $? 来获得。</p>
+<p><strong>注意：</strong> 所有函数在使用前必须定义。这意味着必须将函数放在脚本开始部分，直至 shell 解释器首次发现它时，才可以使用。调用函数仅使用其函数名即可。</p>
+<p><strong>注意：</strong> return 语句只能返回一个介于 0 到 255 之间的整数，而两个输入数字的和可能超过这个范围。</p>
+<p>要解决这个问题，您可以修改 return 语句，直接使用 echo 输出和而不是使用 return：</p>
+<pre><code class="language-shell">funWithReturn (){
+    echo "这个函数会对输入的两个数字进行相加运算..."
+    echo "输入第一个数字:"
+    read aNum
+    echo "输入第二个数字:"
+    read anotherNum
+    sum=$((&lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10903em;"&gt;N&lt;/span&gt;&lt;span class="mord mathnormal"&gt;u&lt;/span&gt;&lt;span class="mord mathnormal"&gt;m&lt;/span&gt;&lt;span class="mord"&gt;+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;anotherNum))
+    echo "两个数字分别为 &lt;span class="katex"&gt;&lt;span class="katex-html" aria-hidden="true"&gt;&lt;span class="base"&gt;&lt;span class="strut" style="height:0.6833em;"&gt;&lt;/span&gt;&lt;span class="mord mathnormal"&gt;a&lt;/span&gt;&lt;span class="mord mathnormal" style="margin-right:0.10903em;"&gt;N&lt;/span&gt;&lt;span class="mord mathnormal"&gt;u&lt;/span&gt;&lt;span class="mord mathnormal"&gt;m&lt;/span&gt;&lt;span class="mord cjk_fallback"&gt;和&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;anotherNum !"
+    echo $sum  # 输出两个数字的和
+}
+</code></pre>
+<hr />
+<h3 id="函数参数"><a class="header" href="#函数参数">函数参数</a></h3>
+<p>在 Shell 中，调用函数时可以向其传递参数。在函数体内部，通过 $n 的形式来获取参数的值，例如，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">1</span><span class="mord cjk_fallback">表示第一个参数，</span></span></span></span>2 表示第二个参数...</p>
+<p>带参数的函数示例：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+funWithParam (){
+    echo "第一个参数为 $1 !"
+    echo "第二个参数为 $2 !"
+    echo "第十个参数为 $10 !"
+    echo "第十个参数为 ${10} !"
+    echo "第十一个参数为 ${11} !"
+    echo "参数总数有 $# 个！"
+    echo "作为一个字符串输出所有参数 $* !"
+}
+funWithParam 1 2 3 4 5 6 7 8 9 34 73
+</code></pre>
+<p>输出结果：</p>
+<pre><code>第一个参数为 1 !
+第二个参数为 2 !
+第十个参数为 10 !
+第十个参数为 34 !
+第十一个参数为 73 !
+参数总数有 11 个！
+作为一个字符串输出所有参数 1 2 3 4 5 6 7 8 9 34 73 !
+</code></pre>
+<p>注意，<code>$10</code> 不能获取第十个参数，获取第十个参数需要 <code>${10}</code>。当 n&gt;=10 时，需要使用 <code>${n}</code> 来获取参数。</p>
+<h3 id="特殊参数字符"><a class="header" href="#特殊参数字符">特殊参数字符</a></h3>
+<p>另外，还有几个特殊字符用来处理参数：</p>
+<div class="table-wrapper"><table><thead><tr><th>参数处理</th><th>说明</th></tr></thead><tbody>
+<tr><td>$#</td><td>传递到脚本或函数的参数个数</td></tr>
+<tr><td>$*</td><td>以一个单字符串显示所有向脚本传递的参数</td></tr>
+<tr><td>$$</td><td>脚本运行的当前进程 ID 号</td></tr>
+<tr><td>$!</td><td>后台运行的最后一个进程的 ID 号</td></tr>
+<tr><td>$@</td><td>与 $*相同，但是使用时加引号，并在引号中返回每个参数。</td></tr>
+<tr><td>$-</td><td>显示 Shell 使用的当前选项，与 set 命令功能相同。</td></tr>
+<tr><td>$?</td><td>显示最后命令的退出状态。0 表示没有错误，其他任何值表明有错误。</td></tr>
+</tbody></table>
+</div>
+<p>$? 仅对其上一条指令负责，一旦函数返回后其返回值没有立即保存入参数，那么其返回值将不再能通过 $? 获得。</p>
+<p>测试代码：</p>
+<pre><code class="language-shell">#!/bin/bash
+function demoFun1 (){
+    echo "这是我的第一个 shell 函数！"
+    return `expr 1 + 1`
+}
+
+demoFun1
+echo $?
+
+function demoFun2 (){
+ echo "这是我的第二个 shell 函数！"
+ expr 1 + 1
+}
+
+demoFun2
+echo $?
+demoFun1
+echo 在这里插入命令！
+echo $?
+</code></pre>
+<p>输出结果：</p>
+<pre><code>这是我的第一个 shell 函数！
+2
+这是我的第二个 shell 函数！
+2
+0
+这是我的第一个 shell 函数！
+在这里插入命令！
+0
+</code></pre>
+<p>调用 demoFun2 后，函数最后一条命令 expr 1 + 1 得到的返回值（$? 值）为 0，意思是这个命令没有出错。所有的命令的返回值仅表示其是否出错，而不会有其他有含义的结果。</p>
+<p>第二次调用 demoFun1 后，没有立即查看 $? 的值，而是先插入了一条别的 echo 命令，最后再查看 $? 的值得到的是 0，也就是上一条 echo 命令的结果，而 demoFun1 的返回值被覆盖了。</p>
+<p>下面这个测试，连续使用两次 <strong>echo $?</strong>，得到的结果不同，更为直观：</p>
+<pre><code class="language-shell">#!/bin/bash
+
+function demoFun1 (){
+    echo "这是我的第一个 shell 函数！"
+    return `expr 1 + 1`
+}
+
+demoFun1
+echo $?
+echo $?
+</code></pre>
+<p>输出结果：</p>
+<pre><code>这是我的第一个 shell 函数！
+2
+0
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Shell/Shell流程控制.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Shell/Shell文件包含.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Shell/Shell流程控制.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Shell/Shell文件包含.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

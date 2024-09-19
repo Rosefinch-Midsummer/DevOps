@@ -1,0 +1,390 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shell输入输出重定向 - DevOps</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Linux</li><li class="chapter-item expanded affix "><li class="part-title">Docker</li><li class="chapter-item expanded affix "><li class="part-title">K8s</li><li class="chapter-item expanded affix "><li class="part-title">Shell</li><li class="chapter-item expanded "><a href="../Shell/Shell.html"><strong aria-hidden="true">2.</strong> Shell简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Shell/Shell变量.html"><strong aria-hidden="true">2.1.</strong> Shell变量</a></li><li class="chapter-item expanded "><a href="../Shell/Shell传递参数.html"><strong aria-hidden="true">2.2.</strong> Shell传递参数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell数组.html"><strong aria-hidden="true">2.3.</strong> Shell数组</a></li><li class="chapter-item expanded "><a href="../Shell/Shell运算符.html"><strong aria-hidden="true">2.4.</strong> Shell运算符</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出.html"><strong aria-hidden="true">2.5.</strong> Shell输入输出</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出重定向.html" class="active"><strong aria-hidden="true">2.6.</strong> Shell输入输出重定向</a></li><li class="chapter-item expanded "><a href="../Shell/Shell流程控制.html"><strong aria-hidden="true">2.7.</strong> Shell流程控制</a></li><li class="chapter-item expanded "><a href="../Shell/Shell函数.html"><strong aria-hidden="true">2.8.</strong> Shell函数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell文件包含.html"><strong aria-hidden="true">2.9.</strong> Shell文件包含</a></li><li class="chapter-item expanded "><a href="../Shell/Shell编程综合案例.html"><strong aria-hidden="true">2.10.</strong> Shell编程综合案例</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DevOps</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="shell-输入--输出重定向"><a class="header" href="#shell-输入--输出重定向">Shell 输入 / 输出重定向</a></h1>
+<ul>
+<li><a href="#%E9%87%8D%E5%AE%9A%E5%90%91%E5%91%BD%E4%BB%A4%E5%88%97%E8%A1%A8">重定向命令列表</a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91">输出重定向</a></li>
+<li><a href="#%E8%BE%93%E5%85%A5%E9%87%8D%E5%AE%9A%E5%90%91">输入重定向</a>
+<ul>
+<li><a href="#%E9%87%8D%E5%AE%9A%E5%90%91%E6%B7%B1%E5%85%A5%E8%AE%B2%E8%A7%A3">重定向深入讲解</a></li>
+</ul>
+</li>
+<li><a href="#here-document">Here Document</a>
+<ul>
+<li><a href="#%E5%AE%9E%E4%BE%8B">实例</a></li>
+</ul>
+</li>
+<li><a href="#devnull-%E6%96%87%E4%BB%B6">/dev/null 文件</a></li>
+</ul>
+<p>大多数 UNIX 系统命令从你的终端接受输入并将所产生的输出发送回​​到您的终端。一个命令通常从一个叫标准输入的地方读取输入，默认情况下，这恰好是你的终端。同样，一个命令通常将其输出写入到标准输出，默认情况下，这也是你的终端。</p>
+<h2 id="重定向命令列表"><a class="header" href="#重定向命令列表">重定向命令列表</a></h2>
+<p>列表内容如下：</p>
+<div class="table-wrapper"><table><thead><tr><th>命令</th><th>说明</th></tr></thead><tbody>
+<tr><td>command &gt; file</td><td>将输出重定向到 file。</td></tr>
+<tr><td>command &lt; file</td><td>将输入重定向到 file。</td></tr>
+<tr><td>command &gt;&gt; file</td><td>将输出以追加的方式重定向到 file。</td></tr>
+<tr><td>n &gt; file</td><td>将文件描述符为 n 的文件重定向到 file。</td></tr>
+<tr><td>n &gt;&gt; file</td><td>将文件描述符为 n 的文件以追加的方式重定向到 file。</td></tr>
+<tr><td>n &gt;&amp; m</td><td>将输出文件 m 和 n 合并。</td></tr>
+<tr><td>n &lt;&amp; m</td><td>将输入文件 m 和 n 合并。</td></tr>
+<tr><td>&lt;&lt; tag</td><td>将开始标记 tag 和结束标记 tag 之间的内容作为输入。</td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）。</p>
+</blockquote>
+<hr />
+<h2 id="输出重定向"><a class="header" href="#输出重定向">输出重定向</a></h2>
+<p>重定向一般通过在命令间插入特定的符号来实现。特别的，这些符号的语法如下所示:</p>
+<pre><code class="language-shell">command1 &gt; file1
+</code></pre>
+<p>上面这个命令执行 command1 然后将输出的内容存入 file1。</p>
+<p>注意任何 file1 内的已经存在的内容将被新内容替代。如果要将新内容添加在文件末尾，请使用 &gt;&gt; 操作符。</p>
+<p>执行下面的 who 命令，它将命令的完整的输出重定向在用户文件中 (users):</p>
+<pre><code>$ who &gt; users
+</code></pre>
+<p>执行后，并没有在终端输出信息，这是因为输出已被从默认的标准输出设备（终端）重定向到指定的文件。</p>
+<p>你可以使用 cat 命令查看文件内容：</p>
+<pre><code>$ cat users
+_mbsetupuser console  Oct 31 17:35 
+tianqixin    console  Oct 31 17:35 
+tianqixin    ttys000  Dec  1 11:33 
+</code></pre>
+<p>输出重定向会覆盖文件内容，请看下面的例子：</p>
+<pre><code>$ echo "菜鸟教程：www.runoob.com" &gt; users
+$ cat users
+菜鸟教程：www.runoob.com
+$
+</code></pre>
+<p>如果不希望文件内容被覆盖，可以使用 &gt;&gt; 追加到文件末尾，例如：</p>
+<pre><code>$ echo "菜鸟教程：www.runoob.com" &gt;&gt; users
+$ cat users
+菜鸟教程：www.runoob.com
+菜鸟教程：www.runoob.com
+$
+</code></pre>
+<hr />
+<h2 id="输入重定向"><a class="header" href="#输入重定向">输入重定向</a></h2>
+<p>和输出重定向一样，Unix 命令也可以从文件获取输入，语法为：</p>
+<pre><code>command1 &lt; file1
+</code></pre>
+<p>这样，本来需要从键盘获取输入的命令会转移到文件读取内容。</p>
+<p>注意：输出重定向是大于号 (&gt;)，输入重定向是小于号 (&lt;)。</p>
+<p>接着以上实例，我们需要统计 users 文件的行数，执行以下命令：</p>
+<pre><code>$ wc -l users
+       2 users
+</code></pre>
+<p>也可以将输入重定向到 users 文件：</p>
+<pre><code>$  wc -l &lt; users
+       2 
+</code></pre>
+<p>注意：上面两个例子的结果不同：第一个例子，会输出文件名；第二个不会，因为它仅仅知道从标准输入读取内容。</p>
+<pre><code>command1 &lt; infile &gt; outfile
+</code></pre>
+<p>同时替换输入和输出，执行 command1，从文件 infile 读取内容，然后将输出写入到 outfile 中。</p>
+<h3 id="重定向深入讲解"><a class="header" href="#重定向深入讲解">重定向深入讲解</a></h3>
+<p>一般情况下，每个 Unix/Linux 命令运行时都会打开三个文件：</p>
+<ul>
+<li>标准输入文件 (stdin)：stdin 的文件描述符为 0，Unix 程序默认从 stdin 读取数据。</li>
+<li>标准输出文件 (stdout)：stdout 的文件描述符为 1，Unix 程序默认向 stdout 输出数据。</li>
+<li>标准错误文件 (stderr)：stderr 的文件描述符为 2，Unix 程序会向 stderr 流中写入错误信息。</li>
+</ul>
+<p>默认情况下，command &gt; file 将 stdout 重定向到 file，command &lt; file 将 stdin 重定向到 file。</p>
+<p>如果希望 stderr 重定向到 file，可以这样写：</p>
+<pre><code>$ command 2&gt;file
+</code></pre>
+<p>如果希望 stderr 追加到 file 文件末尾，可以这样写：</p>
+<pre><code>$ command 2&gt;&gt;file
+</code></pre>
+<p><strong>2</strong> 表示标准错误文件 (stderr)。</p>
+<p>如果希望将 stdout 和 stderr 合并后重定向到 file，可以这样写：</p>
+<pre><code>$ command &gt; file 2&gt;&amp;1
+</code></pre>
+<p>或者</p>
+<pre><code>$ command &gt;&gt; file 2&gt;&amp;1
+</code></pre>
+<p>如果希望对 stdin 和 stdout 都重定向，可以这样写：</p>
+<pre><code>$ command &lt; file1 &gt;file2
+</code></pre>
+<p>command 命令将 stdin 重定向到 file1，将 stdout 重定向到 file2。</p>
+<hr />
+<h2 id="here-document"><a class="header" href="#here-document">Here Document</a></h2>
+<p>Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序。</p>
+<p>它的基本的形式如下：</p>
+<pre><code class="language-shell">command &lt;&lt; delimiter
+    document
+delimiter
+</code></pre>
+<p>它的作用是将两个 delimiter 之间的内容 (document) 作为输入传递给 command。</p>
+<blockquote>
+<p>注意：</p>
+<ul>
+<li>结尾的 delimiter 一定要顶格写，前面不能有任何字符，后面也不能有任何字符，包括空格和 tab 缩进。</li>
+<li>开始的 delimiter 前后的空格会被忽略掉。</li>
+</ul>
+</blockquote>
+<h3 id="实例"><a class="header" href="#实例">实例</a></h3>
+<p>在命令行中通过 wc -l 命令计算 Here Document 的行数：</p>
+<pre><code class="language-shell">$ wc -l &lt;&lt; EOF
+    欢迎来到
+    菜鸟教程
+    www.runoob.com
+EOF
+3          # 输出结果为 3 行
+$
+</code></pre>
+<p>我们也可以将 Here Document 用在脚本中，例如：</p>
+<pre><code class="language-shell">#!/bin/bash
+# author: 菜鸟教程
+# url:www.runoob.com
+
+cat &lt;&lt; EOF
+欢迎来到
+菜鸟教程
+www.runoob.com
+EOF
+</code></pre>
+<p>执行以上脚本，输出结果：</p>
+<pre><code>欢迎来到
+菜鸟教程
+www.runoob.com
+</code></pre>
+<hr />
+<h2 id="devnull-文件"><a class="header" href="#devnull-文件">/dev/null 文件</a></h2>
+<p>如果希望执行某个命令，但又不希望在屏幕上显示输出结果，那么可以将输出重定向到 /dev/null：</p>
+<pre><code>$ command &gt; /dev/null
+</code></pre>
+<p>/dev/null 是一个特殊的文件，写入到它的内容都会被丢弃；如果尝试从该文件读取内容，那么什么也读不到。但是 /dev/null 文件非常有用，将命令的输出重定向到它，会起到 "禁止输出" 的效果。</p>
+<p>如果希望屏蔽 stdout 和 stderr，可以这样写：</p>
+<pre><code>$ command &gt; /dev/null 2&gt;&amp;1
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 0 是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）。</p>
+<p>这里的 <strong>2</strong> 和 <strong>&gt;</strong> 之间不可以有空格，<strong>2&gt;</strong> 是一体的时候才表示错误输出。</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Shell/Shell输入输出.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Shell/Shell流程控制.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Shell/Shell输入输出.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Shell/Shell流程控制.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

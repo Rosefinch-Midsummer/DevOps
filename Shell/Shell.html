@@ -1,0 +1,304 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shell简介 - DevOps</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Linux</li><li class="chapter-item expanded affix "><li class="part-title">Docker</li><li class="chapter-item expanded affix "><li class="part-title">K8s</li><li class="chapter-item expanded affix "><li class="part-title">Shell</li><li class="chapter-item expanded "><a href="../Shell/Shell.html" class="active"><strong aria-hidden="true">2.</strong> Shell简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Shell/Shell变量.html"><strong aria-hidden="true">2.1.</strong> Shell变量</a></li><li class="chapter-item expanded "><a href="../Shell/Shell传递参数.html"><strong aria-hidden="true">2.2.</strong> Shell传递参数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell数组.html"><strong aria-hidden="true">2.3.</strong> Shell数组</a></li><li class="chapter-item expanded "><a href="../Shell/Shell运算符.html"><strong aria-hidden="true">2.4.</strong> Shell运算符</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出.html"><strong aria-hidden="true">2.5.</strong> Shell输入输出</a></li><li class="chapter-item expanded "><a href="../Shell/Shell输入输出重定向.html"><strong aria-hidden="true">2.6.</strong> Shell输入输出重定向</a></li><li class="chapter-item expanded "><a href="../Shell/Shell流程控制.html"><strong aria-hidden="true">2.7.</strong> Shell流程控制</a></li><li class="chapter-item expanded "><a href="../Shell/Shell函数.html"><strong aria-hidden="true">2.8.</strong> Shell函数</a></li><li class="chapter-item expanded "><a href="../Shell/Shell文件包含.html"><strong aria-hidden="true">2.9.</strong> Shell文件包含</a></li><li class="chapter-item expanded "><a href="../Shell/Shell编程综合案例.html"><strong aria-hidden="true">2.10.</strong> Shell编程综合案例</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DevOps</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="shell-教程"><a class="header" href="#shell-教程">Shell 教程</a></h1>
+<ul>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E4%B9%A0-shell-%E7%BC%96%E7%A8%8B">为什么要学习 Shell 编程</a></li>
+<li><a href="#shell-%E7%AE%80%E4%BB%8B">Shell 简介</a></li>
+<li><a href="#%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7">在线工具</a></li>
+<li><a href="#shell-%E8%84%9A%E6%9C%AC">Shell 脚本</a></li>
+<li><a href="#shell-%E7%8E%AF%E5%A2%83">Shell 环境</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%80%E4%B8%AA-shell-%E8%84%9A%E6%9C%AC">第一个 shell 脚本</a>
+<ul>
+<li><a href="#%E8%BF%90%E8%A1%8C-shell-%E8%84%9A%E6%9C%AC%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95">运行 Shell 脚本有两种方法：</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="为什么要学习-shell-编程"><a class="header" href="#为什么要学习-shell-编程">为什么要学习 Shell 编程</a></h2>
+<p>1.Linux 运维工程师在进行服务器集群管理时，需要编写 Shell 程序来进行服务器管理</p>
+<ol start="2">
+<li>
+<p>对于 JavaEE 和 Python 程序员来说，工作的需要，你的老大会要求你编写一些 Shel 脚本进行程序或者是服务器的维护，比如编写一个定时备份数据库的脚本</p>
+</li>
+<li>
+<p>对于大数据程序员来说，需要编写 Shell 程序来管理集群</p>
+</li>
+</ol>
+<h2 id="shell-简介"><a class="header" href="#shell-简介">Shell 简介</a></h2>
+<p>Shell 是一个用 C 语言编写的程序，它是用户使用 Linux 的桥梁。Shell 既是一种命令语言，又是一种程序设计语言。</p>
+<p>Shell 是指一种应用程序，这个应用程序提供了一个界面，用户通过这个界面访问操作系统内核的服务。</p>
+<p>Ken Thompson 的 sh 是第一种 Unix Shell，Windows Explorer 是一个典型的图形界面 Shell。</p>
+<hr />
+<h2 id="在线工具"><a class="header" href="#在线工具">在线工具</a></h2>
+<p><a href="https://www.runoob.com/try/showbash.php?filename=helloworld"><strong>Shell 在线工具</strong></a></p>
+<p><a href="https://www.onlinegdb.com/online_bash_shell">Online Bash Shell</a></p>
+<h2 id="shell-脚本"><a class="header" href="#shell-脚本">Shell 脚本</a></h2>
+<p>Shell 脚本（shell script），是一种为 shell 编写的脚本程序。</p>
+<p>业界所说的 shell 通常都是指 shell 脚本，但读者朋友要知道，shell 和 shell script 是两个不同的概念。</p>
+<p>由于习惯的原因，简洁起见，本文出现的 "shell 编程" 都是指 shell 脚本编程，不是指开发 shell 自身。</p>
+<hr />
+<h2 id="shell-环境"><a class="header" href="#shell-环境">Shell 环境</a></h2>
+<p>Shell 编程跟 JavaScript、php 编程一样，只要有一个能编写代码的文本编辑器和一个能解释执行的脚本解释器就可以了。</p>
+<p>Linux 的 Shell 种类众多，常见的有：</p>
+<ul>
+<li>Bourne Shell（/usr/bin/sh 或 /bin/sh）</li>
+<li>Bourne Again Shell（/bin/bash）</li>
+<li>C Shell（/usr/bin/csh）</li>
+<li>K Shell（/usr/bin/ksh）</li>
+<li>Shell for Root（/sbin/sh）</li>
+<li>……</li>
+</ul>
+<p>本教程关注的是 Bash，也就是 Bourne Again Shell，由于易用和免费，Bash 在日常工作中被广泛使用。同时，Bash 也是大多数 Linux 系统默认的 Shell。</p>
+<p>在一般情况下，人们并不区分 Bourne Shell 和 Bourne Again Shell，所以，像 <strong>#!/bin/sh</strong>，它同样也可以改为 <strong>#!/bin/bash</strong>。</p>
+<p><code>#!</code> 告诉系统其后路径所指定的程序即是解释此脚本文件的 Shell 程序。</p>
+<hr />
+<h2 id="第一个-shell-脚本"><a class="header" href="#第一个-shell-脚本">第一个 shell 脚本</a></h2>
+<p>打开文本编辑器 (可以使用 vi/vim 命令来创建文件)，新建一个文件 test.sh，扩展名为 sh（sh 代表 shell），扩展名并不影响脚本执行，见名知意就好，如果你用 php 写 shell 脚本，扩展名就用 php 好了。</p>
+<p>输入一些代码，第一行一般是这样：</p>
+<pre><code class="language-bash">#!/bin/bash  
+echo "Hello World !"  
+</code></pre>
+<p><code>#!</code> 是一个约定的标记，它告诉系统这个脚本需要什么解释器来执行，即使用哪一种 Shell。</p>
+<p>echo 命令用于向窗口输出文本。</p>
+<h3 id="运行-shell-脚本有两种方法"><a class="header" href="#运行-shell-脚本有两种方法">运行 Shell 脚本有两种方法：</a></h3>
+<p><code>myshell.sh &amp;</code> 其中加 <code>&amp;</code> 表示后台运行</p>
+<p><strong>1、作为可执行程序</strong></p>
+<p>将上面的代码保存为 test.sh，并 cd 到相应目录：</p>
+<pre><code class="language-shell">chmod +x ./test.sh  #使脚本具有执行权限
+./test.sh  #执行脚本
+</code></pre>
+<p>注意，一定要写成 ./test.sh，而不是 <strong>test.sh</strong>，运行其它二进制的程序也一样，直接写 test.sh，linux 系统会去 PATH 里寻找有没有叫 test.sh 的，而只有 /bin, /sbin, /usr/bin，/usr/sbin 等在 PATH 里，你的当前目录通常不在 PATH 里，所以写成 test.sh 是会找不到命令的，要用 ./test.sh 告诉系统说，就在当前目录找。</p>
+<p><strong>2、作为解释器参数</strong></p>
+<p>这种运行方式是，直接运行解释器，其参数就是 shell 脚本的文件名，如：</p>
+<pre><code class="language-shell">/bin/sh test.sh
+/bin/php test.php
+</code></pre>
+<p>这种方式运行的脚本，不需要在第一行指定解释器信息，写了也没用。</p>
+<p>说明：不用赋予脚本 <code>+x</code> 权限，直接执行即可。</p>
+<p>例如 <code>sh hello.sh</code> 或 <code>bash hello.sh</code></p>
+<p><code>.sh</code> 文件前可以不加 <code>#!/bin/bash</code> 时然后在执行时使用 <code>bash hello.sh</code></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../前言.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Shell/Shell变量.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../前言.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Shell/Shell变量.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
